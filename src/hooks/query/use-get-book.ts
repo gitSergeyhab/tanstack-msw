@@ -8,12 +8,8 @@ const requestBook = async (id: string) => {
 };
 
 export const useGetBook = (id: string) => {
-  // const queryClient = useQueryClient();
   return useQuery<BookFull, Error>({
     queryKey: ["book"],
     queryFn: () => requestBook(id),
-    // onSuccess: (data) => {
-    //     // queryClient.setQueryData(["books"], data);
-    // },
   });
 };

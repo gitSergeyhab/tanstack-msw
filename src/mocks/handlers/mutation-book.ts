@@ -9,10 +9,9 @@ export const mutationBookHandlers = [
     `${MOCK_URL}/books`,
     async ({ request }) => {
       const body = await request.json();
-      console.log({ body }, "addBook");
       const id = Math.max(...books.map((b) => b.id)) + 1;
       books.push({ ...body, id });
-      await wait(1000);
+      await wait(500);
       return HttpResponse.json({ ...body, id });
     }
   ),
@@ -26,15 +25,15 @@ export const mutationBookHandlers = [
         return new HttpResponse("Book not found", { status: 404 });
       }
       books[books.indexOf(oldBook)] = body;
-      await wait(1000);
+      await wait(500);
       return HttpResponse.json(body);
     }
   ),
 
-  http.delete<{ id: string }>(`${MOCK_URL}/books/:id`, ({ params }) => {
+  http.delete<{ id: string }>(`${MOCK_URL}/books/:id`, async ({ params }) => {
     const id = params.id;
-    console.log({ id }, "delete/books/:id");
     const book = books.find((b) => b.id === parseInt(id));
+    await wait(500);
     if (book) {
       books.splice(books.indexOf(book), 1);
       return HttpResponse.json({ id: book.id });

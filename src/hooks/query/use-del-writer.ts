@@ -1,4 +1,4 @@
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { request } from "../../api";
 
 const requestDelWriter = async (id: string | number) => {
@@ -6,7 +6,12 @@ const requestDelWriter = async (id: string | number) => {
   return response.data;
 };
 
-export const useDelWriter = () =>
-  useMutation({
+export const useDelWriter = () => {
+  const client = useQueryClient();
+  return useMutation({
     mutationFn: requestDelWriter,
+    onSuccess: () => {
+      client.invalidateQueries({ queryKey: ["writers"] });
+    },
   });
+};

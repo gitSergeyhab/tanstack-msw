@@ -25,7 +25,6 @@ export default function CreateBook() {
 
   const sendData = async (bodyData: BookMutationFormData) => {
     const result = await queryAddBook.mutateAsync(adaptBookToBack(bodyData));
-    console.log({ result });
     navigate(`/books/${result.id}`);
   };
 

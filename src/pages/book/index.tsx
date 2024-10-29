@@ -6,10 +6,10 @@ import { useGetBook } from "../../hooks/query/use-get-book";
 
 export default function Book() {
   const { id } = useParams() as { id: string };
-  const { data, isPending, error } = useGetBook(id);
+  const { data, isFetching, error } = useGetBook(id);
   useTitle(data?.title);
 
-  if (isPending) {
+  if (isFetching) {
     return <h1>Loading...</h1>;
   }
 

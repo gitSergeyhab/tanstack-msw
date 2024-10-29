@@ -1,4 +1,4 @@
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { request } from "../../api";
 
 const requestDelBook = async (id: string | number) => {
@@ -6,7 +6,12 @@ const requestDelBook = async (id: string | number) => {
   return response.data;
 };
 
-export const useDelBook = () =>
-  useMutation({
+export const useDelBook = () => {
+  const client = useQueryClient();
+  return useMutation({
     mutationFn: requestDelBook,
+    onSuccess: () => {
+      client.invalidateQueries({ queryKey: ["books"] });
+    },
   });
+};
