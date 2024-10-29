@@ -2,15 +2,11 @@ import { useParams } from "react-router-dom";
 import { JsonText } from "../../components/json-text";
 import { useTitle } from "../../hooks/use-title";
 import { AppLink } from "../../components/link";
-import { useQuery } from "@tanstack/react-query";
-import { fetchBook } from "../../fetch-data/fetch-books";
+import { useGetBook } from "../../hooks/query/use-get-book";
 
 export default function Book() {
   const { id } = useParams() as { id: string };
-  const { data, isPending, error } = useQuery({
-    queryKey: ["book", id],
-    queryFn: () => fetchBook(id),
-  });
+  const { data, isPending, error } = useGetBook(id);
   useTitle(data?.title);
 
   if (isPending) {

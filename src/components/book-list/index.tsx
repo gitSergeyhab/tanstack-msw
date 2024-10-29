@@ -7,7 +7,7 @@ import styles from "./style.module.css";
 
 export interface BookListProps {
   books: BookItem[];
-  onDelete?: (id: string) => void;
+  onDelete?: (id: number) => void;
 }
 
 export const BookList: FC<BookListProps> = ({ books, onDelete }) => {
@@ -17,7 +17,9 @@ export const BookList: FC<BookListProps> = ({ books, onDelete }) => {
         <li key={id} className={styles.listItem}>
           <ContentLink
             href={`/books/${id}`}
-            title={`${title}, ${author?.firstName} ${author?.lastName} (${year})`}
+            title={`${title}, ${author?.firstName || ""} ${
+              author?.lastName || ""
+            } (${year})`}
             size="large"
           />
           {onDelete && (

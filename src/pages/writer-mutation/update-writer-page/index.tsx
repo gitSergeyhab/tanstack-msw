@@ -1,72 +1,53 @@
-import { useMutation, useQuery } from "@apollo/client";
+import { useNavigate, useParams } from "react-router-dom";
 import { WriterMutationFormData } from "../../../types/forms";
 import { useTitle } from "../../../hooks/use-title";
-import { useNavigate, useParams } from "react-router-dom";
-import { GET_COUNTRIES } from "../../../graphql/countries";
-import { Country } from "../../../types/country";
-import {
-  GET_WRITER,
-  GET_WRITERS_ID_NAME,
-  UPDATE_WRITER,
-} from "../../../graphql/writers";
 import { WriterForm } from "../form";
 import { adaptCountries } from "../../../utils/adapters";
-import { WriterFull } from "../../../types/writer";
+import { useUpdWriter } from "../../../hooks/query/use-upd-writer";
+import { useGetCountries } from "../../../hooks/query/use-get-countries";
+import { useGetWriter } from "../../../hooks/query/use-get-writer";
 
 export default function UpdateWriter() {
   useTitle("Update Writer");
 
   const { id } = useParams() as { id: string };
+
   const navigate = useNavigate();
 
-  const {
-    data: dataWriter,
-    error: errorWriter,
-    loading: loadingWriter,
-  } = useQuery<{ writer: WriterFull }>(GET_WRITER, {
-    variables: { id },
-  });
+  const queryWriter = useGetWriter(id);
+  const queryCountries = useGetCountries();
+  const queryUpdWriter = useUpdWriter();
 
-  const {
-    data: countriesData,
-    error: countriesError,
-    loading: countriesLoading,
-  } = useQuery<{ countries: Country[] }>(GET_COUNTRIES);
-
-  const [
-    updateWriter,
-    { error: errorUpdateWriter, loading: loadingUpdateWriter },
-  ] = useMutation(UPDATE_WRITER, {
-    refetchQueries: [
-      { query: GET_WRITER, variables: { id } },
-      { query: GET_WRITERS_ID_NAME },
-    ],
-  });
-
-  if (countriesLoading || loadingWriter) {
+  if (queryCountries.isPending || queryWriter.isPending) {
     return <h1>Loading...</h1>;
   }
 
-  if (countriesError || !countriesData || !dataWriter || errorWriter) {
+  if (
+    queryCountries.error ||
+    !queryCountries.data ||
+    !queryWriter.data ||
+    queryWriter.error
+  ) {
     return <h1>Error</h1>;
   }
 
   const sendData = async (data: WriterMutationFormData) => {
-    const result = await updateWriter({
-      variables: data,
+    const result = await queryUpdWriter.mutateAsync({
+      data,
+      id: queryWriter.data.id,
     });
-    navigate(`/writers/${result.data?.updateWriter.id}`);
+    navigate(`/writers/${result.id}`);
   };
 
   return (
     <>
-      <h1>Update Book</h1>
+      <h1>Update Writer</h1>
       <WriterForm
-        countryOptions={adaptCountries(countriesData.countries)}
-        defaultValues={dataWriter.writer}
+        countryOptions={adaptCountries(queryCountries.data)}
+        defaultValues={queryWriter.data}
         onSubmit={sendData}
-        error={errorUpdateWriter?.message}
-        loading={loadingUpdateWriter}
+        error={queryUpdWriter.error?.message}
+        loading={queryUpdWriter.isPending}
       />
     </>
   );

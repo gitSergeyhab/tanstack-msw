@@ -61,8 +61,8 @@ export const WriterForm: FC<CreateBookFormProps> = ({
       <FormSelect
         options={countryOptions}
         id="country"
-        registerProps={register("country")}
-        error={formState.errors.country?.message}
+        registerProps={register("countryId")}
+        error={formState.errors.countryId?.message}
         label="Country"
       />
       <FormInput

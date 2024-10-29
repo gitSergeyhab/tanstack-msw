@@ -1,12 +1,15 @@
-import { useMutation, useQuery } from "@apollo/client";
-import { BookForm } from "../form";
-import { GET_WRITERS_ID_NAME } from "../../../graphql/writers";
-import { WriterNameId } from "../../../types/writer";
-import { BookMutationFormData } from "../../../types/forms";
-import { GET_BOOK, GET_BOOKS, UPDATE_BOOK } from "../../../graphql/books";
-import { useTitle } from "../../../hooks/use-title";
-import { BookFull } from "../../../types/book";
 import { useNavigate, useParams } from "react-router-dom";
+import { BookForm } from "../form";
+import { BookMutationFormData } from "../../../types/forms";
+import { useTitle } from "../../../hooks/use-title";
+import {
+  adaptBookToBack,
+  adaptBookToForm,
+  adaptWriterIdName,
+} from "../../../utils/adapters";
+import { useUpdBook } from "../../../hooks/query/use-upd-book";
+import { useGetWritersIdNames } from "../../../hooks/query/use-get-writer-id-names";
+import { useGetBook } from "../../../hooks/query/use-get-book";
 
 export default function UpdateBook() {
   useTitle("Update Book");
@@ -14,68 +17,40 @@ export default function UpdateBook() {
   const { id } = useParams() as { id: string };
   const navigate = useNavigate();
 
-  const {
-    data: dataWriters,
-    loading: loadingWriters,
-    error: errorWriters,
-  } = useQuery<{ writers: WriterNameId[] }>(GET_WRITERS_ID_NAME);
+  const queryWriters = useGetWritersIdNames();
+  const queryBook = useGetBook(id);
+  const queryUpdBook = useUpdBook();
 
-  const {
-    data: dataBook,
-    loading: loadingBook,
-    error: errorBook,
-  } = useQuery<{ book: BookFull }>(GET_BOOK, {
-    variables: {
-      id,
-    },
-  });
-
-  const [updateBook, { loading: addBookLoading, error: addBookError }] =
-    useMutation(UPDATE_BOOK, {
-      refetchQueries: [
-        { query: GET_BOOK, variables: { id } },
-        { query: GET_BOOKS },
-      ],
-    });
-
-  if (loadingWriters || loadingBook) {
+  if (queryWriters.isPending || queryBook.isPending) {
     return <h1>Loading...</h1>;
   }
 
-  if (errorWriters || errorBook || !dataWriters || !dataBook) {
+  if (
+    queryWriters.error ||
+    queryBook.error ||
+    !queryWriters.data ||
+    !queryBook.data
+  ) {
     return <h1>Error</h1>;
   }
 
   const sendData = async (data: BookMutationFormData) => {
-    const result = await updateBook({
-      variables: {
-        ...data,
-        mainCharacters: data.mainCharacters.map(({ name }) => name),
-      },
+    const result = await queryUpdBook.mutateAsync({
+      data: adaptBookToBack(data),
+      id: queryBook.data.id,
     });
-    navigate(`/books/${result.data?.updateBook.id}`);
+    navigate(`/books/${result.id}`);
   };
 
   return (
     <>
       <h1>Update Book</h1>
       <BookForm
-        authorOptions={dataWriters.writers.map(
-          ({ id, firstName, lastName }) => ({
-            value: id,
-            label: `${firstName} ${lastName}`,
-          })
-        )}
-        defaultValues={{
-          ...dataBook.book,
-          mainCharacters: dataBook.book.mainCharacters.map((character) => ({
-            id: character,
-            name: character,
-          })),
-        }}
+        authorOptions={queryWriters.data.map(adaptWriterIdName)}
+        defaultValues={adaptBookToForm(queryBook.data)}
         onSubmit={sendData}
-        error={addBookError?.message}
-        loading={addBookLoading}
+        error={queryUpdBook.error?.message}
+        loading={queryUpdBook.isPending}
       />
     </>
   );

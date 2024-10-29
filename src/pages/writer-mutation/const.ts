@@ -24,8 +24,11 @@ export const pageFormSchema: Yup.ObjectSchema<WriterMutationFormData> =
       })
       .min(0, "min 0")
       .max(2024, "max 2024"),
-    country: Yup.string()
-      .required("required field")
-      .max(64, "64 characters max"),
+    countryId: Yup.number()
+      .nullable()
+      .transform((value) =>
+        value === null || value === "" ? undefined : Number(value)
+      )
+      .required("required field"),
     city: Yup.string().max(64, "64 characters max"),
   });

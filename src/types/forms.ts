@@ -1,8 +1,8 @@
 export interface BookMutationFormData {
   title: string;
-  year?: number;
-  genre?: string;
-  authorId?: string;
+  year: number;
+  genre: string;
+  authorId: number | null;
   mainCharacters: { name: string }[];
 }
 
@@ -11,6 +11,6 @@ export interface WriterMutationFormData {
   lastName?: string;
   birthYear?: number;
   deathYear?: number | null;
-  country?: string;
+  countryId?: number | null;
   city?: string;
 }

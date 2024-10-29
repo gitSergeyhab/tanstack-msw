@@ -1,15 +1,11 @@
 import { useParams } from "react-router-dom";
 import { FC } from "react";
 import { BookList } from "../../components/book-list";
-import { useQuery } from "@tanstack/react-query";
-import { fetchBooks } from "../../fetch-data/fetch-books";
+import { useGetBooks } from "../../hooks/query/use-get-books";
 
 export const BookSection: FC = () => {
   const { id } = useParams() as { id: string };
-  const { data, error, isPending } = useQuery({
-    queryKey: ["books", id],
-    queryFn: () => fetchBooks({ authorId: id }),
-  });
+  const { data, error, isPending } = useGetBooks({ authorId: id });
 
   if (isPending) {
     return <h1>Loading...</h1>;

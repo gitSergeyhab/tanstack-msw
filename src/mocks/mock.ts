@@ -1,4 +1,4 @@
-import { MockBook } from "../types/book";
+import { ServerBook } from "../types/book";
 import { Country } from "../types/country";
 import { WriterFull } from "../types/writer";
 
@@ -9,7 +9,7 @@ export const writers: WriterFull[] = [
     lastName: "King",
     birthYear: 1947,
     deathYear: null,
-    country: 1,
+    countryId: 1,
     city: "Portland, Maine",
   },
   {
@@ -18,7 +18,7 @@ export const writers: WriterFull[] = [
     lastName: "Vonnegut",
     birthYear: 1922,
     deathYear: 2007,
-    country: 1,
+    countryId: 1,
     city: "Indianapolis, Indiana",
   },
   {
@@ -27,7 +27,7 @@ export const writers: WriterFull[] = [
     lastName: "Wells",
     birthYear: 1866,
     deathYear: 1946,
-    country: 2,
+    countryId: 2,
     city: "Bromley, Kent",
   },
   {
@@ -36,7 +36,7 @@ export const writers: WriterFull[] = [
     lastName: "Dick",
     birthYear: 1928,
     deathYear: 1982,
-    country: 1,
+    countryId: 1,
     city: "Chicago, Illinois",
   },
   {
@@ -45,12 +45,12 @@ export const writers: WriterFull[] = [
     lastName: "Adams",
     birthYear: 1952,
     deathYear: 2001,
-    country: 2,
+    countryId: 2,
     city: "Cambridge, England",
   },
 ];
 
-export const books: MockBook[] = [
+export const books: ServerBook[] = [
   {
     id: 1,
     authorId: 1,
@@ -81,7 +81,7 @@ export const books: MockBook[] = [
   },
   {
     id: 3,
-    authorId: 3,
+    authorId: 4,
     title: "Do Androids Dream of Electric Sheep?",
     year: 1968,
     mainCharacters: [
@@ -95,7 +95,7 @@ export const books: MockBook[] = [
   },
   {
     id: 4,
-    authorId: 3,
+    authorId: 4,
     title: "Ubik",
     year: 1969,
     mainCharacters: [
@@ -137,7 +137,7 @@ export const books: MockBook[] = [
   },
   {
     id: 7,
-    authorId: 4,
+    authorId: 3,
     title: "The Island of Doctor Moreau",
     year: 1896,
     mainCharacters: [
@@ -150,7 +150,7 @@ export const books: MockBook[] = [
   },
   {
     id: 8,
-    authorId: 4,
+    authorId: 3,
     title: "The Invisible Man",
     year: 1897,
     mainCharacters: [

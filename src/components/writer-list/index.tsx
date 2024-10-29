@@ -7,7 +7,7 @@ import { Button } from "../button";
 
 export interface WriterListProps {
   writers: WriterItem[];
-  onDelete?: (id: string) => void;
+  onDelete?: (id: number) => void;
 }
 
 export const WriterList: FC<WriterListProps> = ({ writers, onDelete }) => {

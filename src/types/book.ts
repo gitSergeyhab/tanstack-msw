@@ -1,11 +1,13 @@
-export interface MockBook {
+export interface ServerBook {
   id: number;
-  authorId: number;
+  authorId: number | null;
   title: string;
   year: number;
   mainCharacters: string[];
   genre: string;
 }
+
+export type ServerBookNoId = Omit<ServerBook, "id">;
 
 export interface BookItem {
   id: number;

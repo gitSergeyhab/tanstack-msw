@@ -3,16 +3,12 @@ import { BookSection } from "./book-section";
 import { useTitle } from "../../hooks/use-title";
 import { JsonText } from "../../components/json-text";
 import { AppLink } from "../../components/link";
-import { useQuery } from "@tanstack/react-query";
-import { fetchWriter } from "../../fetch-data/fetch-writers";
+import { useGetWriter } from "../../hooks/query/use-get-writer";
 
 export default function Writer() {
   const { id } = useParams() as { id: string };
 
-  const { data, isPending, error } = useQuery({
-    queryKey: ["writer", id],
-    queryFn: () => fetchWriter(id),
-  });
+  const { data, isPending, error } = useGetWriter(id);
 
   const title = data ? `${data?.firstName} ${data?.lastName}` : "";
 

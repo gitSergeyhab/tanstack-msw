@@ -1,40 +1,32 @@
 import { FC } from "react";
 import { WriterList } from "../../components/writer-list";
-import { useQuery } from "@tanstack/react-query";
-import { fetchWriters } from "../../fetch-data/fetch-writers";
+import { useGetWriters } from "../../hooks/query/use-get-writers";
+import { useDelWriter } from "../../hooks/query/use-del-writer";
 
 interface WritersSectionProps {
   country: number | string | null;
 }
 
 export const WritersSection: FC<WritersSectionProps> = ({ country }) => {
-  const { data, error, isPending } = useQuery({
-    queryKey: ["writers", country],
-    queryFn: () => fetchWriters(country),
-  });
+  const queryWriters = useGetWriters({ country: country as number });
 
-  // const [deleteWriter, { error: deleteError }] = useMutation(DELETE_WRITER, {
-  //   refetchQueries: ["GET_WRITERS"],
-  // });
+  const queryDelWriter = useDelWriter();
 
-  if (isPending) {
+  if (queryWriters.isPending) {
     return <h2>Loading...</h2>;
   }
 
-  if (error || !data) {
+  if (queryWriters.error || !queryWriters.data) {
     return <h2>Error</h2>;
   }
 
-  // if (deleteError) {
-  //   console.error(deleteError);
-  // }
+  if (queryDelWriter.error) {
+    console.error(queryDelWriter.error);
+  }
 
-  const onDelete = (id: string) => {
-    console.log(id);
-    // deleteWriter({ variables: { id } });
-  };
+  if (!queryWriters.data?.length) return <h2>No Writers</h2>;
 
-  if (!data?.length) return <h2>No Writers</h2>;
-
-  return <WriterList writers={data} onDelete={onDelete} />;
+  return (
+    <WriterList writers={queryWriters.data} onDelete={queryDelWriter.mutate} />
+  );
 };

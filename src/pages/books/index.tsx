@@ -4,47 +4,36 @@ import { Select } from "../../components/select";
 import { ORDER_OPTIONS } from "./const";
 import { Order } from "../../types/ui";
 import { useTitle } from "../../hooks/use-title";
-import { useQuery } from "@tanstack/react-query";
-import { fetchBooks } from "../../fetch-data/fetch-books";
+import { useGetBooks } from "../../hooks/query/use-get-books";
+import { useDelBook } from "../../hooks/query/use-del-book";
 
 export default function Books() {
   useTitle("Books");
   const [order, setOrder] = useState<Order>("ASC");
-  const { data, error, isPending } = useQuery({
-    queryKey: ["books", order],
-    queryFn: () => fetchBooks({ order, sortBy: "year" }),
-  });
-  // const [deleteBook, { error: deleteError }] = useMutation(DELETE_BOOK, {
-  //   refetchQueries: [
-  //     { query: GET_BOOKS, variables: { sortBy: "year", order: order } },
-  //   ],
-  // });
+
+  const queryBooks = useGetBooks({ order, sortBy: "year" });
+  const queryDelBook = useDelBook();
 
   const onSelect = (value: string) => setOrder(value as Order);
 
-  if (isPending) {
+  if (queryBooks.isPending) {
     return <h1>Loading...</h1>;
   }
 
-  if (error || !data) {
+  if (queryBooks.error || !queryBooks.data) {
     return <h1>Error</h1>;
   }
 
-  // if (deleteError) {
-  //   console.error(deleteError);
-  // }
-
-  const onDelete = (id: string) => {
-    console.log(id);
-    // deleteBook({ variables: { id } });
-  };
+  if (queryDelBook.error) {
+    console.error(queryDelBook.error);
+  }
 
   return (
     <>
       <h1>Books</h1>
       <Select onSelect={onSelect} options={ORDER_OPTIONS} />
-      {data?.length ? (
-        <BookList books={data} onDelete={onDelete} />
+      {queryBooks.data?.length ? (
+        <BookList books={queryBooks.data} onDelete={queryDelBook.mutate} />
       ) : (
         <p>No books =((</p>
       )}

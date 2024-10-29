@@ -1,54 +1,40 @@
-import { useMutation, useQuery } from "@apollo/client";
+import { useNavigate } from "react-router-dom";
 import { useTitle } from "../../../hooks/use-title";
 import { WriterForm } from "../form";
-import { GET_COUNTRIES } from "../../../graphql/countries";
-import { Country } from "../../../types/country";
 import { adaptCountries } from "../../../utils/adapters";
-import {
-  ADD_WRITER,
-  GET_WRITERS,
-  GET_WRITERS_ID_NAME,
-} from "../../../graphql/writers";
 import { WriterMutationFormData } from "../../../types/forms";
-import { useNavigate } from "react-router-dom";
+import { useAddWriter } from "../../../hooks/query/use-add-writer";
+import { useGetCountries } from "../../../hooks/query/use-get-countries";
 
 export default function CreateWriter() {
   useTitle("Create Writer");
   const navigate = useNavigate();
 
-  const {
-    data: dataCountries,
-    error: errorCountries,
-    loading: loadingCountries,
-  } = useQuery<{ countries: Country[] }>(GET_COUNTRIES);
+  const countriesQuery = useGetCountries();
+  const queryAddWriter = useAddWriter();
 
-  const [addWriter, { error: errorAddWriter, loading: loadingAddWriter }] =
-    useMutation(ADD_WRITER, {
-      refetchQueries: [{ query: GET_WRITERS_ID_NAME }, { query: GET_WRITERS }],
-    });
-
-  if (loadingCountries) {
+  if (countriesQuery.isPending) {
     return <h1>Loading...</h1>;
   }
 
-  if (errorCountries || !dataCountries) {
+  if (countriesQuery.error || !countriesQuery.data) {
     return <h1>Error</h1>;
   }
 
   const sendData = async (data: WriterMutationFormData) => {
-    const result = await addWriter({ variables: data });
-    navigate(`/writers/${result.data?.addWriter.id}`);
+    const result = await queryAddWriter.mutateAsync(data);
+    navigate(`/writers/${result.id}`);
   };
 
   return (
     <>
       <h1>Create Writer</h1>
       <WriterForm
-        countryOptions={adaptCountries(dataCountries.countries)}
+        countryOptions={adaptCountries(countriesQuery.data)}
         defaultValues={{}}
         onSubmit={sendData}
-        error={errorAddWriter?.message}
-        loading={loadingAddWriter}
+        error={queryAddWriter.error?.message}
+        loading={queryAddWriter.isPending}
       />
     </>
   );

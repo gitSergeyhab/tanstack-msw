@@ -5,7 +5,7 @@ export const createBookDefaultValues: BookMutationFormData = {
   title: "",
   year: 0,
   genre: "",
-  authorId: "",
+  authorId: null,
   mainCharacters: [{ name: "" }],
 };
 
@@ -20,7 +20,12 @@ export const pageFormSchema: Yup.ObjectSchema<BookMutationFormData> =
       .required("required field")
       .min(2, "2 characters min")
       .max(64, "64 characters max"),
-    authorId: Yup.string().required("required field"),
+    authorId: Yup.number()
+      .nullable()
+      .transform((value) =>
+        value === null || value === "" ? undefined : Number(value)
+      )
+      .required("required field"),
     mainCharacters: Yup.array()
       .of(
         Yup.object().shape({

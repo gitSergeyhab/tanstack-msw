@@ -2,17 +2,11 @@ import { WritersSection } from "./writers-section";
 import { useState } from "react";
 import { Select } from "../../components/select";
 import { adaptCountries } from "../../utils/adapters";
-import { useQuery } from "@tanstack/react-query";
-import { fetchCountries } from "../../fetch-data/fetch-countries";
+import { useGetCountries } from "../../hooks/query/use-get-countries";
 
 export default function Writers() {
-  const { data, error, isPending } = useQuery({
-    queryKey: ["countries"],
-    queryFn: fetchCountries,
-  });
-
+  const { data, error, isPending } = useGetCountries();
   const [countryId, setCountryId] = useState<number | null | string>(null);
-  console.log({ countryId, data });
 
   if (isPending) {
     return <h1>Loading...</h1>;

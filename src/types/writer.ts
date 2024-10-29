@@ -7,9 +7,11 @@ export interface WriterItem {
 
 export interface WriterFull extends WriterItem {
   deathYear: number | null;
-  country: number;
+  countryId: number;
   city: string;
 }
+
+export type WriterNoId = Omit<WriterFull, "id">;
 
 export interface WriterNameId {
   id: number;

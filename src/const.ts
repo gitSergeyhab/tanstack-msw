@@ -1,4 +1,6 @@
 export const MOCK_URL = "http://example.com";
+export const BASE_URL = "http://example.com";
+
 interface NavItem {
   name: string;
   path: string;
