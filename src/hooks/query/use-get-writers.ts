@@ -14,13 +14,8 @@ const requestWriters = async ({ country }: RequestWriters) => {
   return response.data;
 };
 
-export const useGetWriters = ({ country }: RequestWriters) => {
-  // const queryClient = useQueryClient();
-  return useQuery<WriterItem[], Error>({
+export const useGetWriters = ({ country }: RequestWriters) =>
+  useQuery<WriterItem[], Error>({
     queryKey: ["writers", { country }],
     queryFn: () => requestWriters({ country }),
-    // onSuccess: (data) => {
-    //     // queryClient.setQueryData(["books"], data);
-    // },
   });
-};

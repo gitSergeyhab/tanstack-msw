@@ -16,13 +16,8 @@ const requestBooks = async (params: RequestBooks) => {
   return response.data;
 };
 
-export const useGetBooks = (params: RequestBooks) => {
-  // const queryClient = useQueryClient();
-  return useQuery<BookItem[], Error>({
+export const useGetBooks = (params: RequestBooks) =>
+  useQuery<BookItem[], Error>({
     queryKey: ["books", params],
     queryFn: () => requestBooks(params),
-    // onSuccess: (data) => {
-    //     // queryClient.setQueryData(["books"], data);
-    // },
   });
-};

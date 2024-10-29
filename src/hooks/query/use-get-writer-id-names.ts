@@ -7,13 +7,8 @@ const requestWriter = async () => {
   return response.data;
 };
 
-export const useGetWritersIdNames = () => {
-  // const queryClient = useQueryClient();
-  return useQuery<WriterNameId[], Error>({
+export const useGetWritersIdNames = () =>
+  useQuery<WriterNameId[], Error>({
     queryKey: ["writer-id-names"],
     queryFn: requestWriter,
-    // onSuccess: (data) => {
-    //     // queryClient.setQueryData(["books"], data);
-    // },
   });
-};

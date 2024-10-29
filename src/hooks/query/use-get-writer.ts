@@ -7,13 +7,8 @@ const requestWriter = async (id: string) => {
   return response.data;
 };
 
-export const useGetWriter = (id: string) => {
-  // const queryClient = useQueryClient();
-  return useQuery<WriterFull, Error>({
+export const useGetWriter = (id: string) =>
+  useQuery<WriterFull, Error>({
     queryKey: ["writer"],
     queryFn: () => requestWriter(id),
-    // onSuccess: (data) => {
-    //     // queryClient.setQueryData(["books"], data);
-    // },
   });
-};
